@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task 4</title>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+
+        button {
+            padding: 7px 12px;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background: #eee;
+        }
+
+        .done {
+            color: green;
+            font-weight: bold;
+        }
+
+        .not-done {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Todo Stuff</h2>
+
+    <div>
+        <button onclick="filterStuff('all')">All</button>
+        <button onclick="filterStuff('complete')">Complete</button>
+        <button onclick="filterStuff('incomplete')">Incomplete</button>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Task</th>
+                <th>Complete/Incomplete</th>
+            </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+    </table>
+
+    <script>
+        let todoStuff = [];
+
+        fetch('https://jsonplaceholder.typicode.com/todos')
+            .then(r => r.json())
+            .then(list => {
+                todoStuff = list;
+                drawRows(todoStuff);
+            });
+
+        function drawRows(list) {
+            const el = document.getElementById('rows');
+            el.innerHTML = '';
+
+            list.forEach(item => {
+                const tr = document.createElement('tr');
+
+                tr.innerHTML = `
+                    <td>${item.id}</td>
+                    <td>${item.title}</td>
+                    <td class="${item.completed ? 'done':'not-done'}">
+                        ${item.completed ? 'Complete':'Incomplete'}
+                    </td>
+                `;
+
+                el.appendChild(tr);
+            });
+        }
+
+        function filterStuff(type) {
+            if (type === 'complete') {
+                drawRows(todoStuff.filter(x => x.completed));
+                return;
+            }
+
+            if (type === 'incomplete') {
+                drawRows(todoStuff.filter(x => !x.completed));
+                return;
+            }
+
+            drawRows(todoStuff);
+        }
+    </script>
+
+</body>
+</html>
